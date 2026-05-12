@@ -1,0 +1,10 @@
+{
+  "name": "attendance-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Attendance System - Root package.json for Railway deployment",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && node app.js"
+  }
+}
