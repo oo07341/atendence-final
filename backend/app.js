@@ -36,32 +36,44 @@ const frontendDist = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendDist));
 
 // 所有非 API 路由返回前端页面（支持 SPA 路由）
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   if (!req.path.startsWith("/api")) {
-    res.sendFile(path.join(frontendDist, "
-    process.exit(1);
+    res.sendFile(path.join(frontendDist, "index.html"));
+  } else {
+    res.status(404).json({ message: "API route not found" });
   }
+});
 
-  const server = app.listen(PORT, () => {
-    console.log(`[Server] 服务运行在 http://localhost:${PORT}`);
-  });
+// 启动服务器
+const startServer = async () => {
+  try {
+    await testConnection();
+    console.log("[Server] 数据库连接成功");
 
-  const shutdown = async (signal) => {
-    console.log(`\n[Server] 收到 ${signal}，正在优雅关闭...`);
-    server.close(async () => {
-      console.log("[Server] HTTP 服务器已关闭");
-      await closePool();
-      process.exit(0);
+    const server = app.listen(PORT, () => {
+      console.log(`[Server] 服务运行在 http://localhost:${PORT}`);
     });
 
-    setTimeout(() => {
-      console.error("[Server] 强制退出（超时）");
-      process.exit(1);
-    }, 10000);
-  };
+    const shutdown = async (signal) => {
+      console.log(`\n[Server] 收到 ${signal}，正在优雅关闭...`);
+      server.close(async () => {
+        console.log("[Server] HTTP 服务器已关闭");
+        await closePool();
+        process.exit(0);
+      });
 
-  process.on("SIGINT", () => shutdown("SIGINT"));
-  process.on("SIGTERM", () => shutdown("SIGTERM"));
-}
+      setTimeout(() => {
+        console.error("[Server] 强制退出（超时）");
+        process.exit(1);
+      }, 10000);
+    };
+
+    process.on("SIGINT", () => shutdown("SIGINT"));
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
+  } catch (error) {
+    console.error("[Server] 启动失败:", error);
+    process.exit(1);
+  }
+};
 
 startServer();
