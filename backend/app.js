@@ -22,6 +22,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// API 路由
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/activities", activityRoutes);
@@ -35,8 +36,8 @@ app.use("/api/reports", reportRoutes);
 const frontendDist = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendDist));
 
-// 所有非 API 路由返回前端页面（支持 SPA 路由）
-app.get("/*", (req, res) => {
+// 所有非 API 路由返回前端页面（支持 SPA 路由），Express 4 兼容
+app.get("*", (req, res) => {
   if (!req.path.startsWith("/api")) {
     res.sendFile(path.join(frontendDist, "index.html"));
   } else {
