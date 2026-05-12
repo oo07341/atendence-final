@@ -38,14 +38,7 @@ app.use(express.static(frontendDist));
 // 所有非 API 路由返回前端页面（支持 SPA 路由）
 app.get("*", (req, res) => {
   if (!req.path.startsWith("/api")) {
-    res.sendFile(path.join(frontendDist, "index.html"));
-  }
-});
-
-async function startServer() {
-  const connected = await testConnection();
-  if (!connected) {
-    console.error("[Server] 数据库不可用，服务器启动终止");
+    res.sendFile(path.join(frontendDist, "
     process.exit(1);
   }
 
