@@ -37,7 +37,7 @@ const frontendDist = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendDist));
 
 // 所有非 API 路由返回前端页面（支持 SPA 路由），Express 4 兼容
-app.get("*", (req, res) => {
+app.get("/{*splat}", (req, res) => {
   if (!req.path.startsWith("/api")) {
     res.sendFile(path.join(frontendDist, "index.html"));
   } else {
